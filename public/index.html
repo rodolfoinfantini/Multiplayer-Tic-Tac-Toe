@@ -30,7 +30,7 @@
     
 
     <script>
-        var socket = io('localhost:3000')
+        var socket = io('https://3000-aquamarine-crane-32midgti.ws-us08.gitpod.io/')
 
         var board = document.querySelector(".board")
         var btnX = document.querySelector(".btnX")
@@ -77,6 +77,8 @@
             for(i  = 0; i < 9; i++){
                 document.querySelector(".loc-" + i).innerText = ""
             }
+            isWaiting = false
+            canPlay = false
         })
     </script>
 </body>

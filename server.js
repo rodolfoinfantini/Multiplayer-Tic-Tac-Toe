@@ -55,36 +55,31 @@ io.on('connection', socket =>{
 
     socket.on('move',loc =>{
         var location = loc
-        console.log(location)
         if(positions[location] == "X" || positions[location] == "O") return
         if(xClient == socket){
             if(turn != "X") return
             positions[location] = "X"
-            checkWin()
             turn = "O"
-            xClient.emit('render',positions)
-            oClient.emit('render',positions)
         }else if(oClient == socket){
             if(turn != "O") return
             positions[location] = "O"
-            checkWin()
             turn = "X"
-            xClient.emit('render',positions)
-            oClient.emit('render',positions)
-            xClient = undefined
-            oClient = undefined
-            isPlaying = false
-            turn = "X"
-            positions = ["","","",
-                        "","","",
-                        "","",""]
         }
+        xClient.emit('render',positions)
+        oClient.emit('render',positions)
+        checkWin()
     })
 
     function win(who){
-        console.log("win " + who)
         xClient.emit('win',who)
         oClient.emit('win',who)
+        xClient = null
+        oClient = null
+        isPlaying = false
+        turn = "X"
+        positions = ["","","",
+                    "","","",
+                    "","",""]
     }
 
     function checkWin(){

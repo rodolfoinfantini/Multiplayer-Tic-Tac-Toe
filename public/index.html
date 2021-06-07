@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="btns">
+            <button class="btnX">X</button>
+            <button class="btnO">O</button>
+        </div>
+        <div class="board">
+            <div class="loc-0 space br bb"></div>
+            <div class="loc-1 space br bb"></div>
+            <div class="loc-2 space bb"></div>
+            <div class="loc-3 space br bb"></div>
+            <div class="loc-4 space br bb"></div>
+            <div class="loc-5 space bb"></div>
+            <div class="loc-6 space br"></div>
+            <div class="loc-7 space br"></div>
+            <div class="loc-8 space"></div>
+        </div>
+    </div>
+    
+
+    <script>
+        var socket = io('localhost:3000')
+
+        var board = document.querySelector(".board")
+        var btnX = document.querySelector(".btnX")
+        var btnO = document.querySelector(".btnO")
+
+        var canPlay = false
+
+        var isWaiting = false
+
+        board.addEventListener('click', e =>{
+            if(!canPlay)return
+            socket.emit('move',e.target.classList[0].replace('loc-',''))
+        })
+
+        btnX.addEventListener('click', function(){
+            if(isWaiting)return
+            socket.emit('xselected')
+        })
+
+        btnO.addEventListener('click', function(){
+            if(isWaiting)return
+            socket.emit('oselected')
+        })
+
+        socket.on('confirm', function(){
+            isWaiting = true
+            window.alert("waiting for opponent")
+        })
+
+        socket.on('start', function(){
+            window.alert("connected")
+            canPlay = true
+        })
+
+        socket.on('render',positions =>{
+            console.log(positions)
+            for(i  = 0; i < positions.length; i++){
+                document.querySelector(".loc-" + i).innerText = positions[i]
+            }
+        })
+    </script>
+</body>
+</html>

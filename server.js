@@ -17,9 +17,9 @@ var xClient
 var oClient
 var isPlaying = false
 var turn = "X"
-var positions = [" "," "," ",
-                " "," "," ",
-                " "," "," "]
+var positions = ["","","",
+                "","","",
+                "","",""]
 
 io.on('connection', socket =>{
     console.log("> Socket conectado " + socket.id)
@@ -60,19 +60,45 @@ io.on('connection', socket =>{
         if(xClient == socket){
             if(turn != "X") return
             positions[location] = "X"
-            console.log(positions)
+            checkWin()
             turn = "O"
             xClient.emit('render',positions)
             oClient.emit('render',positions)
         }else if(oClient == socket){
             if(turn != "O") return
             positions[location] = "O"
-            console.log(positions)
+            checkWin()
             turn = "X"
             xClient.emit('render',positions)
             oClient.emit('render',positions)
+            xClient = undefined
+            oClient = undefined
+            isPlaying = false
+            turn = "X"
+            positions = ["","","",
+                        "","","",
+                        "","",""]
         }
     })
+
+    function win(who){
+        console.log("win " + who)
+        xClient.emit('win',who)
+        oClient.emit('win',who)
+    }
+
+    function checkWin(){
+        if((positions[0] == positions[1] && positions[1] == positions[2]) && positions[0] != "") win(positions[0])
+        else if((positions[3] == positions[4] && positions[4] == positions[5]) && positions[3] != "") win(positions[3])
+        else if((positions[6] == positions[7] && positions[7] == positions[8]) && positions[6] != "") win(positions[6])
+
+        else if((positions[0] == positions[3] && positions[3] == positions[6]) && positions[0] != "") win(positions[0])
+        else if((positions[1] == positions[4] && positions[4] == positions[7]) && positions[1] != "") win(positions[1])
+        else if((positions[2] == positions[5] && positions[5] == positions[8]) && positions[2] != "") win(positions[2])
+
+        else if((positions[0] == positions[4] && positions[4] == positions[8]) && positions[0] != "") win(positions[0])
+        else if((positions[2] == positions[4] && positions[4] == positions[6]) && positions[2] != "") win(positions[2])
+    }
 })
 
 server.listen(3000)

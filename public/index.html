@@ -71,6 +71,13 @@
                 document.querySelector(".loc-" + i).innerText = positions[i]
             }
         })
+
+        socket.on('win',who =>{
+            window.alert(who + " Wins!")
+            for(i  = 0; i < 9; i++){
+                document.querySelector(".loc-" + i).innerText = ""
+            }
+        })
     </script>
 </body>
 </html>
